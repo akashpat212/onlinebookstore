@@ -59,4 +59,25 @@ jobs:
           #params: # optional, default is 
     # GitHub API Token-change- made changes to runner, added wsl 2,fix docker: Got permission denied , inbound/outbound allowed
           github_token: ${{ github.token }}    
-          params: --bug-tracker=Sarif --checkmarx.version=9.6  --logging.level.com.checkmarx.flow.service=DEBUG --sca.enable-sca-resolver=true   
+          params: --bug-tracker=Sarif --checkmarx.version=9.6  --logging.level.com.checkmarx.flow.service=DEBUG --sca.enable-sca-resolver=true
+  Sarif:
+    runs-on: ubuntu-latest
+    permissions:
+      # required for all workflows
+      security-events: write
+      # only required for workflows in private repositories
+      actions: read
+      contents: read
+    steps:
+      # This step checks out a copy of your repository.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          # Path to SARIF file relative to the root of the repository
+          sarif_file: cx.sarif
+          # Optional category for the results
+          # Used to differentiate multiple results for one commit
+          category: CxSAST  
+  
